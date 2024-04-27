@@ -138,15 +138,15 @@ class _AlbumTile extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  // Total photos
-                  Text(
-                    album.value.assetPathEntity?.assetCount.toString() ?? '',
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 13,
-                    ),
-                  ),
+                  // const SizedBox(height: 4),
+                  // // Total photos
+                  // Text(
+                  //   album.value.assetPathEntity?.assetCount.toString() ?? '',
+                  //   style: TextStyle(
+                  //     color: Colors.grey.shade500,
+                  //     fontSize: 13,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

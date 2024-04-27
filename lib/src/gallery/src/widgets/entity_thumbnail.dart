@@ -26,20 +26,38 @@ class EntityThumbnail extends StatelessWidget {
 
     //
     if (entity.type == AssetType.image || entity.type == AssetType.video) {
-      if (entity.pickedThumbData != null) {
-        child = Image.memory(
-          entity.pickedThumbData!,
-          fit: BoxFit.cover,
-        );
-      } else {
-        child = Image(
-          image: _MediaThumbnailProvider(
-            entity: entity,
-            onBytesLoaded: onBytesGenerated,
+      return FutureBuilder<Uint8List?>(
+        future: entity.thumbnailDataWithOption(
+          ThumbnailOption.ios(
+            size: const ThumbnailSize.square(500),
+            resizeContentMode: ResizeContentMode.fill,
           ),
-          fit: BoxFit.cover,
-        );
-      }
+        ),
+        builder: (BuildContext context, AsyncSnapshot<Uint8List?> snapshot) {
+          Widget w;
+          if (snapshot.hasError) {
+            return ErrorWidget(snapshot.error!);
+          } else if (snapshot.hasData) {
+            final Uint8List data = snapshot.data!;
+            ui.decodeImageFromList(data, (ui.Image result) {
+              // for 4288x2848
+            });
+            w = Image.memory(data,fit: BoxFit.cover,);
+          } else {
+            w = Center(
+              child: Container(
+                color: Colors.white,
+                padding: const EdgeInsets.all(20),
+                child: const CircularProgressIndicator(),
+              ),
+            );
+          }
+          return GestureDetector(
+            child: w,
+            onTap: () => Navigator.pop(context),
+          );
+        },
+      );
     }
 
     if (entity.type == AssetType.audio) {
@@ -86,7 +104,7 @@ class _MediaThumbnailProvider extends ImageProvider<_MediaThumbnailProvider> {
   @override
   ImageStreamCompleter load(
     _MediaThumbnailProvider key,
-    DecoderCallback decode,
+    ImageDecoderCallback decode,
   ) =>
       MultiFrameImageStreamCompleter(
         codec: _loadAsync(key, decode),
@@ -98,12 +116,13 @@ class _MediaThumbnailProvider extends ImageProvider<_MediaThumbnailProvider> {
 
   Future<ui.Codec> _loadAsync(
     _MediaThumbnailProvider key,
-    DecoderCallback decode,
+    ImageDecoderCallback decode,
   ) async {
     assert(key == this, 'Checks _MediaThumbnailProvider');
-    final bytes = await entity.thumbnailData;
+    final bytes = entity.pickedThumbData;
     onBytesLoaded?.call(bytes);
-    return decode(bytes!);
+    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes!);
+    return decode(buffer);
   }
 
   @override
