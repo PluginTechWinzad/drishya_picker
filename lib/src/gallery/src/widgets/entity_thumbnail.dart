@@ -88,62 +88,6 @@ class EntityThumbnail extends StatelessWidget {
   }
 }
 
-/// ImageProvider implementation
-@immutable
-class _MediaThumbnailProvider extends ImageProvider<_MediaThumbnailProvider> {
-  /// Constructor for creating a [_MediaThumbnailProvider]
-  const _MediaThumbnailProvider({
-    required this.entity,
-    this.onBytesLoaded,
-  });
-
-  ///
-  final DrishyaEntity entity;
-  final ValueSetter<Uint8List?>? onBytesLoaded;
-
-  @override
-  ImageStreamCompleter load(
-    _MediaThumbnailProvider key,
-    ImageDecoderCallback decode,
-  ) =>
-      MultiFrameImageStreamCompleter(
-        codec: _loadAsync(key, decode),
-        scale: 1,
-        informationCollector: () sync* {
-          yield ErrorDescription('Id: ${entity.id}');
-        },
-      );
-
-  Future<ui.Codec> _loadAsync(
-    _MediaThumbnailProvider key,
-    ImageDecoderCallback decode,
-  ) async {
-    assert(key == this, 'Checks _MediaThumbnailProvider');
-    final bytes = entity.pickedThumbData;
-    onBytesLoaded?.call(bytes);
-    final buffer = await ui.ImmutableBuffer.fromUint8List(bytes!);
-    return decode(buffer);
-  }
-
-  @override
-  Future<_MediaThumbnailProvider> obtainKey(ImageConfiguration configuration) =>
-      SynchronousFuture<_MediaThumbnailProvider>(this);
-
-  @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) return false;
-    // ignore: test_types_in_equals
-    final typedOther = other as _MediaThumbnailProvider;
-    return entity.id == typedOther.entity.id;
-  }
-
-  @override
-  int get hashCode => entity.id.hashCode;
-
-  @override
-  String toString() => '$_MediaThumbnailProvider("${entity.id}")';
-}
-
 class _DurationView extends StatelessWidget {
   const _DurationView({
     Key? key,
