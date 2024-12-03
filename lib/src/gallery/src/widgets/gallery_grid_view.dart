@@ -218,7 +218,7 @@ class _SelectionCount extends StatelessWidget {
             radius: 14,
             child: Text(
               '${index + 1}',
-              style: Theme.of(context).textTheme.button?.copyWith(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
             ),

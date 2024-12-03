@@ -177,7 +177,7 @@ class DrishyaEditingController extends ValueNotifier<EditorValue> {
         // image, create entity and return it
         final entity = await PhotoManager.editor.saveImage(
           bg.bytes,
-          title: const Uuid().v4()+'.png',
+          filename: const Uuid().v4()+'.png',
         );
         return entity?.toDrishya;
       } else {
